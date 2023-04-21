@@ -120,12 +120,25 @@
     min-width: min-content;
 }
 
+@media (max-width: 900px) {
+    .benefits-content-list-element {
+      flex: 33%;
+    }
+}
+
 .benefits-content-list-icon {
     padding-bottom: 10px;
+    transition: scale 0.5s ease;
 }
 
 .benefits-content-list-icon > img {
     height: 60px;
+    transition: scale 0.2s ease;
+}
+
+.benefits-content-list-icon > img:hover {
+  scale: 1.15;
+  transition: scale 0.2s ease;
 }
 
 .benefits-content-list-description, .benefits-content-list-description-blue {
