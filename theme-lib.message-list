@@ -7,8 +7,14 @@
 <#assign sorting = http.request.parameters.name.get("sort", "") />
  
 <#-- page size -->
-<#-- Set pageSize to an exact number 30 as we don't want to assign it using any other source, even if the user set it to a custom value (instruction says "always") -->
+<#-- Set pageSize to an exact number 30 as we don't want to assign it using any other source -->
 <#assign pageSize = 30 />
+<#if user.registered>
+   <#assign pageSizeUser = settings.name.get("layout.messages_per_page_linear") />
+   <#if pageSizeUser?number != pageSize?number>
+       <#assign pageSize = pageSizeUser />
+   </#if>
+</#if>
  
 <#if webuisupport.path.parameters.name.get("label-name")??>
    <#assign label = webuisupport.path.parameters.name.get("label-name").getText() />
@@ -29,6 +35,7 @@
 <#assign basePagingQry = "SELECT count(*) FROM messages WHERE depth = 0 AND board.id = '${coreNode.id}' " />
 <#assign whereClause = label_query />
  
+<#-- When modifying the sorting methods, I simply followed the logic of existing ones and my SQL knowledge. Also, baseQry includes all the things I needed there. -->
 <#switch sorting>
    <#case "kudos">
        <#assign orderClause = "ORDER BY kudos.sum(weight) DESC " />
@@ -51,7 +58,7 @@
    <#case "unanswered">
        <#assign orderClause = "ORDER BY replies.count(*) ASC " />
    <#break>
-   <#-- Return only unsolved conversations (whereClause) descending (from the newest latest post in conversation to the oldest) -->
+   <#-- Return only unsolved conversations (whereClause) descending (from the newest latest post in conversation to the oldest - additional "feature") -->
    <#case "unsolved">
        <#assign whereClause = whereClause + " AND conversation.solved = false " />
        <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
@@ -88,7 +95,7 @@
                    <option value="views" <#if sorting == 'views'>selected</#if>>${text.format("theme-lib.community-activity.views")}</option>
                    <option value="replies" <#if sorting == 'replies'>selected</#if>>${text.format("theme-lib.community-activity.replies")}</option>
                    <option value="kudos" <#if sorting == 'kudos'>selected</#if>>${text.format("theme-lib.community-activity.kudos")}</option>
-                   <#-- Added options for new sorting methods to the select box -->
+                   <#-- Added options for new sorting methods to the select box (followed the pattern) -->
                    <option value="post_time" <#if sorting == 'post_time'>selected</#if>>${text.format("theme-lib.community-activity.post_time")}</option>
                    <option value="low_kudos" <#if sorting == 'low_kudos'>selected</#if>>${text.format("theme-lib.community-activity.low_kudos")}</option>
                    <option value="unanswered" <#if sorting == 'unanswered'>selected</#if>>${text.format("theme-lib.community-activity.unanswered")}</option>
