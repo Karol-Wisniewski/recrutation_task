@@ -201,6 +201,30 @@
 
 .map-wrapper {
    display: flex;
+   flex-direction: column;
+}
+
+/* new button container element */
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+/* new button element */
+
+.violet-button {
+    background: #9700d3;
+    border-radius: 8px;
+    border: none;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 700;
 }
 
 .map-content-image {
@@ -224,7 +248,8 @@
 }
 
 .map-content-text-1 {
-   width: calc(100% / 3 - 10px);
+  /* Changed calc(100% / 3 - 10px) to calc(100% / 3) so the button and map-content-texts are properly centered*/
+   width: calc(100% / 3);
    display: flex;
    font-size: 20px;
    line-height: 30px;
@@ -701,6 +726,26 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
 <script defer src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet preconnect">
 
+<script>
+  // Listener for DOM content loaded event is there to ensure that the script is executed after the DOM is loaded so that the map element is available.
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const mapElement = document.getElementById('map');
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('button-container');
+
+    const violetButton = document.createElement('button');
+    violetButton.classList.add('violet-button');
+    violetButton.innerHTML = 'Open Google Maps';
+    violetButton.addEventListener('click', () => {
+        window.open('https://www.google.com/maps', '_blank');
+    });
+
+    buttonContainer.appendChild(violetButton);
+    mapElement.appendChild(buttonContainer);
+  });
+</script>
+
 </head>
 <body>
 
@@ -814,7 +859,7 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
   <img src="https://community.dynatrace.com/html/assets/wave-blue-2.png">
 </div>
 
-<div class="map-wrapper">
+<div class="map-wrapper" id="map">
   <div class="map-content">
     <div class="map-content-title">
       <div class="map-content-title-light">
