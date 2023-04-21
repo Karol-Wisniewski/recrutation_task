@@ -7,13 +7,8 @@
 <#assign sorting = http.request.parameters.name.get("sort", "") />
  
 <#-- page size -->
-<#assign pageSize = coreNode.settings.name.get("layout.messages_per_page_linear", "10")?number />
-<#if user.registered>
-   <#assign pageSizeUser = settings.name.get("layout.messages_per_page_linear") />
-   <#if pageSizeUser?number != pageSize?number>
-       <#assign pageSize = pageSizeUser />
-   </#if>
-</#if>
+<#-- Set pageSize to an exact number 30 as we don't want to assign it using any other source, even if the user set it to a custom value (instruction says "always") -->
+<#assign pageSize = 30 />
  
 <#if webuisupport.path.parameters.name.get("label-name")??>
    <#assign label = webuisupport.path.parameters.name.get("label-name").getText() />
@@ -43,6 +38,23 @@
    <#break>
    <#case "replies">
        <#assign orderClause = "ORDER BY replies.count(*) DESC " />
+   <#break>
+   <#-- Sort by post time descending -->
+   <#case "post_time">
+       <#assign orderClause = "ORDER BY post_time DESC " />
+   <#break>
+   <#-- Sort by the the number of kudos ascending -->
+   <#case "low_kudos">
+       <#assign orderClause = "ORDER BY kudos.sum(weight) ASC " />
+   <#break>
+    <#-- Sort by the the number of answers ascending -->
+   <#case "unanswered">
+       <#assign orderClause = "ORDER BY replies.count(*) ASC " />
+   <#break>
+   <#-- Return only unsolved conversations (whereClause) descending (from the newest latest post in conversation to the oldest) -->
+   <#case "unsolved">
+       <#assign whereClause = whereClause + " AND conversation.solved = false " />
+       <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
    <#break>
    <#default>
        <#assign orderClause = "ORDER BY conversation.last_post_time DESC " />
@@ -76,6 +88,11 @@
                    <option value="views" <#if sorting == 'views'>selected</#if>>${text.format("theme-lib.community-activity.views")}</option>
                    <option value="replies" <#if sorting == 'replies'>selected</#if>>${text.format("theme-lib.community-activity.replies")}</option>
                    <option value="kudos" <#if sorting == 'kudos'>selected</#if>>${text.format("theme-lib.community-activity.kudos")}</option>
+                   <#-- Added options for new sorting methods to the select box -->
+                   <option value="post_time" <#if sorting == 'post_time'>selected</#if>>${text.format("theme-lib.community-activity.post_time")}</option>
+                   <option value="low_kudos" <#if sorting == 'low_kudos'>selected</#if>>${text.format("theme-lib.community-activity.low_kudos")}</option>
+                   <option value="unanswered" <#if sorting == 'unanswered'>selected</#if>>${text.format("theme-lib.community-activity.unanswered")}</option>
+                   <option value="unsolved" <#if sorting == 'unsolved'>selected</#if>>${text.format("theme-lib.community-activity.unsolved")}</option>
                </select>
                <#if page.interactionStyle=="idea">
                  <@component id="custom.idea.status.label" />
@@ -149,8 +166,9 @@
        <#assign msg_status_txt = "theme-lib.general.thread-floated" />
    </#if>
    <#if msg.conversation.solved>
-       <#assign solved = "custom-thread-solved" />
-       <#assign msg_status_icon = "custom-thread-solved" />
+       <#-- changed 'custom-thread-solved' to 'new-thread-solved' in 'solved' and 'msg_status_icon' as they were sharing the same class before. Now if the conversation is solved, the new class of 'solved' and 'msg_status_icon' will be set to "new-thread-solved" -->
+       <#assign solved = "new-thread-solved" />
+       <#assign msg_status_icon = "new-thread-solved" />
        <#assign msg_status_txt = "theme-lib.general.thread-solved" />
    </#if>
    <#if !msg.user_context.read>
