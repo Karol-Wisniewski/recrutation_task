@@ -128,7 +128,6 @@
 
 .benefits-content-list-icon {
     padding-bottom: 10px;
-    transition: scale 0.5s ease;
 }
 
 .benefits-content-list-icon > img {
@@ -137,7 +136,7 @@
 }
 
 .benefits-content-list-icon > img:hover {
-  scale: 1.15;
+  scale: 1.2;
   transition: scale 0.2s ease;
 }
 
@@ -225,6 +224,11 @@
     text-decoration: none;
     cursor: pointer;
     font-weight: 700;
+}
+
+.violet-button:hover {
+    text-decoration: none;
+    color: #e2e2e2;
 }
 
 .map-content-image {
@@ -734,12 +738,15 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add('button-container');
 
-    const violetButton = document.createElement('button');
+    // "a" tag is treated by the browser almost the same way as a "button" tag, but it is more semantically correct to use "a" tag for links.
+    // it also allows screen reader users to know that the element is a link and where it leads to.
+    const violetButton = document.createElement('a');
     violetButton.classList.add('violet-button');
-    violetButton.innerHTML = 'Open Google Maps';
-    violetButton.addEventListener('click', () => {
-        window.open('https://www.google.com/maps', '_blank');
-    });
+    violetButton.textContent = 'Open Google Maps';
+    violetButton.href = 'https://www.google.com/maps';
+    violetButton.target = '_blank';
+
+
 
     buttonContainer.appendChild(violetButton);
     mapElement.appendChild(buttonContainer);
@@ -1113,6 +1120,5 @@ span.lia-button-link-arrow.lia-button-link-arrow-black {
     </div>
   </div>
 </div>
-
 </body>
 </html>

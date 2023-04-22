@@ -9,12 +9,15 @@
 <#-- page size -->
 <#-- Set pageSize to an exact number 30 as we don't want to assign it using any other source -->
 <#assign pageSize = 30 />
-<#if user.registered>
-   <#assign pageSizeUser = settings.name.get("layout.messages_per_page_linear") />
-   <#if pageSizeUser?number != pageSize?number>
-       <#assign pageSize = pageSizeUser />
-   </#if>
-</#if>
+<#-- 
+  <#if user.registered>
+    <#assign pageSizeUser = settings.name.get("layout.messages_per_page_linear") />
+    <#if pageSizeUser?number != pageSize?number>
+        <#assign pageSize = pageSizeUser />
+    </#if>
+  </#if> 
+-->
+<#-- The condition above is commented out because we don't want to use the user's setting for the page size. It should always be set to 30, without using any external source -->
  
 <#if webuisupport.path.parameters.name.get("label-name")??>
    <#assign label = webuisupport.path.parameters.name.get("label-name").getText() />
